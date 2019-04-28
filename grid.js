@@ -32,10 +32,27 @@ if ( WEBGL.isWebGLAvailable() === false ) {
 				rollOverMesh = new THREE.Mesh( rollOverGeo, rollOverMaterial );
 				scene.add( rollOverMesh );
 
-				// cubes
+				//STL LOADER
 
-				cubeGeo = new THREE.BoxBufferGeometry( 50, 50, 50 );
-				cubeMaterial = new THREE.MeshLambertMaterial( { color: 0xfeb74c, map: new THREE.STLLoader().load( 'stls\DLU_Dungeon_Floor_2x2.stl' ) } );
+// 				var loader = new THREE.STLLoader();
+// loader.load('stls\DLU_Dungeon_Floor_2x2.stl', function(geometry) {
+
+//   var mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({
+//     color: 0xff00ff,
+//     wireframe: true
+//   }));
+//   mesh.rotation.set(-Math.PI / 2, 0, 0);
+//   mesh.scale.setScalar(100);
+//   scene.add(mesh);
+
+//   console.log("stl volume is " + getVolume(geometry));
+// });
+
+				cubeGeo = new THREE.STLLoader().load( 'stls\DLU_Dungeon_Floor_2x2.stl' )
+				//cubeMaterial = new THREE.MeshLambertMaterial( { color: 0xfeb74c, map:  } );
+
+				// cubeGeo = new THREE.BoxBufferGeometry( 50, 50, 50 );
+				// cubeMaterial = new THREE.MeshLambertMaterial( { color: 0xfeb74c, map: new THREE.STLLoader().load( 'stls\DLU_Dungeon_Floor_2x2.stl' ) } );
 
 				// grid
 
@@ -141,14 +158,18 @@ if ( WEBGL.isWebGLAvailable() === false ) {
 						// create cube
 
 					} else {
-
-						var voxel = new THREE.Mesh( cubeGeo, cubeMaterial );
-						voxel.position.copy( intersect.point ).add( intersect.face.normal );
-						voxel.position.divideScalar( 50 ).floor().multiplyScalar( 50 ).addScalar( 25 );
-						scene.add( voxel );
-
-						objects.push( voxel );
-
+						var loader = new THREE.STLLoader();
+						loader.load('https://raw.githubusercontent.com/natereinhardt/stl-dungeon-designer/master/stls/DLU_Dungeon_Floor_2x2.stl', function(geometry) {
+							var material = new THREE.MeshPhongMaterial( { color: 0xAAAAAA, specular: 0x111111, shininess: 200 } );
+							var mesh = new THREE.Mesh(geometry, material);
+							mesh.position.copy( intersect.point ).add( intersect.face.normal );
+							mesh.position.divideScalar( 50 ).floor().multiplyScalar( 50 ).addScalar( 25 );
+							mesh.rotation.set( - Math.PI / 2, 0, 0 );
+							scene.add( mesh );
+				
+							objects.push( mesh );
+						
+						  });
 					}
 
 					render();
